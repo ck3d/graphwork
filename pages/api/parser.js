@@ -21,7 +21,7 @@ const parser = function(gexfFile) {
   }
 
   semiParsedGraph.forEachNode(node => nodeParser(node))
-  semiParsedGraph.forEachEdge((ed, atts, source, target) => graph.links.push({
+  semiParsedGraph.forEachEdge((_ed, _atts, source, target) => graph.links.push({
     "source": source,
     "target": target
   }))
