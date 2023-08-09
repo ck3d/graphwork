@@ -7,7 +7,7 @@ import { zoom } from 'd3'
 
 export default function Home() {
 
-  let [graphState, setGraphState] = useState({nodes:[],links:[]})
+  let [graphState, setGraphState] = useState({ nodes: [], links: [] })
   let [graphAttributes, setGraphAttributes] = useState({})
   let [selectedNode, setSelectedNode] = useState({})
   let [connectedNodes, setConnectedNodes] = useState([])
@@ -18,68 +18,68 @@ export default function Home() {
   let zoomable = zoom()
 
   useEffect(() => {
-     // Copyright 2021 Observable, Inc.
-  // Released under the ISC license.
-  // https://observablehq.com/@d3/force-directed-graph
-  function ForceGraph({
-    nodes, // an iterable of node objects (typically [{id}, …])
-    links // an iterable of link objects (typically [{source, target}, …])
-  }, {
-    nodeId = d => d.id, // given d in nodes, returns a unique identifier (string)
-    nodeGroup, // given d in nodes, returns an (ordinal) value for color
-    nodeGroups, // an array of ordinal values representing the node groups
-    nodeTitle, // given d in nodes, a title string
-    nodeFill = "currentColor", // node stroke fill (if not using a group color encoding)
-    nodeStroke = "#fff", // node stroke color
-    nodeStrokeWidth = 1.5, // node stroke width, in pixels
-    nodeStrokeOpacity = 1, // node stroke opacity
-    nodeRadius = 5, // node radius, in pixels
-    nodeStrength,
-    linkSource = ({source}) => source, // given d in links, returns a node identifier string
-    linkTarget = ({target}) => target, // given d in links, returns a node identifier string
-    linkStroke = "#999", // link stroke color
-    linkStrokeOpacity = 0.6, // link stroke opacity
-    linkStrokeWidth = 1.5, // given d in links, returns a stroke width in pixels
-    linkStrokeLinecap = "round", // link stroke linecap
-    linkStrength,
-    colors = d3.schemeTableau10, // an array of color strings, for the node groups
-    width = 640, // outer width, in pixels
-    height = 400, // outer height, in pixels
-    invalidation // when this promise resolves, stop the simulation
-  } = {}) {
-    // Compute values.
-    const N = d3.map(nodes, nodeId).map(intern);
-    const LS = d3.map(links, linkSource).map(intern);
-    const LT = d3.map(links, linkTarget).map(intern);
-    if (nodeTitle === undefined) nodeTitle = (_, i) => N[i];
-    const T = nodeTitle == null ? null : d3.map(nodes, nodeTitle);
-    const G = nodeGroup == null ? null : d3.map(nodes, nodeGroup).map(intern);
-    const W = typeof linkStrokeWidth !== "function" ? null : d3.map(links, linkStrokeWidth);
-    const L = typeof linkStroke !== "function" ? null : d3.map(links, linkStroke);
+    // Copyright 2021 Observable, Inc.
+    // Released under the ISC license.
+    // https://observablehq.com/@d3/force-directed-graph
+    function ForceGraph({
+      nodes, // an iterable of node objects (typically [{id}, …])
+      links // an iterable of link objects (typically [{source, target}, …])
+    }, {
+      nodeId = d => d.id, // given d in nodes, returns a unique identifier (string)
+      nodeGroup, // given d in nodes, returns an (ordinal) value for color
+      nodeGroups, // an array of ordinal values representing the node groups
+      nodeTitle, // given d in nodes, a title string
+      nodeFill = "currentColor", // node stroke fill (if not using a group color encoding)
+      nodeStroke = "#fff", // node stroke color
+      nodeStrokeWidth = 1.5, // node stroke width, in pixels
+      nodeStrokeOpacity = 1, // node stroke opacity
+      nodeRadius = 5, // node radius, in pixels
+      nodeStrength,
+      linkSource = ({ source }) => source, // given d in links, returns a node identifier string
+      linkTarget = ({ target }) => target, // given d in links, returns a node identifier string
+      linkStroke = "#999", // link stroke color
+      linkStrokeOpacity = 0.6, // link stroke opacity
+      linkStrokeWidth = 1.5, // given d in links, returns a stroke width in pixels
+      linkStrokeLinecap = "round", // link stroke linecap
+      linkStrength,
+      colors = d3.schemeTableau10, // an array of color strings, for the node groups
+      width = 640, // outer width, in pixels
+      height = 400, // outer height, in pixels
+      invalidation // when this promise resolves, stop the simulation
+    } = {}) {
+      // Compute values.
+      const N = d3.map(nodes, nodeId).map(intern);
+      const LS = d3.map(links, linkSource).map(intern);
+      const LT = d3.map(links, linkTarget).map(intern);
+      if (nodeTitle === undefined) nodeTitle = (_, i) => N[i];
+      const T = nodeTitle == null ? null : d3.map(nodes, nodeTitle);
+      const G = nodeGroup == null ? null : d3.map(nodes, nodeGroup).map(intern);
+      const W = typeof linkStrokeWidth !== "function" ? null : d3.map(links, linkStrokeWidth);
+      const L = typeof linkStroke !== "function" ? null : d3.map(links, linkStroke);
 
-    // Replace the input nodes and links with mutable objects for the simulation.
-    nodes = d3.map(nodes, (_, i) => ({id: N[i]}));
-    links = d3.map(links, (_, i) => ({source: LS[i], target: LT[i]}));
+      // Replace the input nodes and links with mutable objects for the simulation.
+      nodes = d3.map(nodes, (_, i) => ({ id: N[i] }));
+      links = d3.map(links, (_, i) => ({ source: LS[i], target: LT[i] }));
 
-    // Compute default domains.
-    if (G && nodeGroups === undefined) nodeGroups = d3.sort(G);
+      // Compute default domains.
+      if (G && nodeGroups === undefined) nodeGroups = d3.sort(G);
 
-    // Construct the scales.
-    const color = nodeGroup == null ? null : d3.scaleOrdinal(nodeGroups, colors);
+      // Construct the scales.
+      const color = nodeGroup == null ? null : d3.scaleOrdinal(nodeGroups, colors);
 
-    // Construct the forces.
-    const forceNode = d3.forceManyBody();
-    const forceLink = d3.forceLink(links).id(({index: i}) => N[i]);
-    if (nodeStrength !== undefined) forceNode.strength(nodeStrength);
-    if (linkStrength !== undefined) forceLink.strength(linkStrength);
+      // Construct the forces.
+      const forceNode = d3.forceManyBody();
+      const forceLink = d3.forceLink(links).id(({ index: i }) => N[i]);
+      if (nodeStrength !== undefined) forceNode.strength(nodeStrength);
+      if (linkStrength !== undefined) forceLink.strength(linkStrength);
 
-    const simulation = d3.forceSimulation(nodes)
+      const simulation = d3.forceSimulation(nodes)
         .force("link", forceLink)
         .force("charge", forceNode)
-        .force("center",  d3.forceCenter())
+        .force("center", d3.forceCenter())
         .on("tick", ticked);
 
-    const svg = d3.create("svg")
+      const svg = d3.create("svg")
         //- .attr("width", width)
         //- .attr("height", height)
         .attr("preserveAspectRatio", "xMinYMin meet")
@@ -87,10 +87,10 @@ export default function Home() {
         .attr("viewBox", [-1500, -1500, 3000, 3000])
         .attr("style", "max-width: 100%;")
         .call(zoomable)
-        
-        
-    
-    const link = svg.append("g")
+
+
+
+      const link = svg.append("g")
         .attr("stroke", typeof linkStroke !== "function" ? linkStroke : null)
         .attr("stroke-opacity", linkStrokeOpacity)
         .attr("stroke-width", typeof linkStrokeWidth !== "function" ? linkStrokeWidth : null)
@@ -103,15 +103,15 @@ export default function Home() {
           console.log(link)
         })
 
-    const node = svg.append("g")
+      const node = svg.append("g")
         .attr("fill", nodeFill)
         .attr("stroke", nodeStroke)
         .attr("stroke-opacity", nodeStrokeOpacity)
         .attr("stroke-width", nodeStrokeWidth)
         .attr("class", "nodes")
-      .selectAll("circle")
-      .data(nodes)
-      .join("circle")
+        .selectAll("circle")
+        .data(nodes)
+        .join("circle")
         .attr("r", nodeRadius)
         .attr("class", "graphG")
         .on('mouseover', (node) => {
@@ -125,126 +125,128 @@ export default function Home() {
         .on('click', node => {
           let renderedAttributes = retrieveNodeAttributes(node.srcElement['__data__'].id)
           console.log(node)
-          setSelectedNode( {'node': node,
-                           'attributes' : renderedAttributes})
-          
+          setSelectedNode({
+            'node': node,
+            'attributes': renderedAttributes
+          })
+
           //setConnectedNodes([node.srcElement['__data__'].id])
           findConnectedNodes(node.srcElement['__data__'].id)
         }
-          )
+        )
         .call(drag(simulation));
 
-    if (W) link.attr("stroke-width", ({index: i}) => W[i]);
-    if (L) link.attr("stroke", ({index: i}) => L[i]);
-    if (G) node.attr("fill", ({index: i}) => color(G[i]));
-    if (T) node.append("title").text(({index: i}) => T[i]);
-    if (invalidation != null) invalidation.then(() => simulation.stop());     
+      if (W) link.attr("stroke-width", ({ index: i }) => W[i]);
+      if (L) link.attr("stroke", ({ index: i }) => L[i]);
+      if (G) node.attr("fill", ({ index: i }) => color(G[i]));
+      if (T) node.append("title").text(({ index: i }) => T[i]);
+      if (invalidation != null) invalidation.then(() => simulation.stop());
 
-    function intern(value) {
-      return value !== null && typeof value === "object" ? value.valueOf() : value;
-    }
-
-    function ticked() {
-      link
-        .attr("x1", d => d.source.x)
-        .attr("y1", d => d.source.y)
-        .attr("x2", d => d.target.x)
-        .attr("y2", d => d.target.y);
-
-      node
-        .attr("cx", d => d.x)
-        .attr("cy", d => d.y);
-    }
-
-    function drag(simulation) {    
-      function dragstarted(event) {
-        if (!event.active) simulation.alphaTarget(0.3).restart();
-        event.subject.fx = event.subject.x;
-        event.subject.fy = event.subject.y;
+      function intern(value) {
+        return value !== null && typeof value === "object" ? value.valueOf() : value;
       }
-      
-      function dragged(event) {
-        event.subject.fx = event.x;
-        event.subject.fy = event.y;
+
+      function ticked() {
+        link
+          .attr("x1", d => d.source.x)
+          .attr("y1", d => d.source.y)
+          .attr("x2", d => d.target.x)
+          .attr("y2", d => d.target.y);
+
+        node
+          .attr("cx", d => d.x)
+          .attr("cy", d => d.y);
       }
-      
-      function dragended(event) {
-        if (!event.active) simulation.alphaTarget(0);
-        event.subject.fx = null;
-        event.subject.fy = null;
+
+      function drag(simulation) {
+        function dragstarted(event) {
+          if (!event.active) simulation.alphaTarget(0.3).restart();
+          event.subject.fx = event.subject.x;
+          event.subject.fy = event.subject.y;
+        }
+
+        function dragged(event) {
+          event.subject.fx = event.x;
+          event.subject.fy = event.y;
+        }
+
+        function dragended(event) {
+          if (!event.active) simulation.alphaTarget(0);
+          event.subject.fx = null;
+          event.subject.fy = null;
+        }
+
+        return d3.drag()
+          .on("start", dragstarted)
+          .on("drag", dragged)
+          .on("end", dragended);
       }
-      
-      return d3.drag()
-        .on("start", dragstarted)
-        .on("drag", dragged)
-        .on("end", dragended);
+
+      return Object.assign(svg.node(), { scales: { color } });
     }
 
-    return Object.assign(svg.node(), {scales: {color}});
-  }
-
-  const retrieveNodeAttributes = function(id){
-    let nodeAttr = graphAttributes[id]
-    const excluded = ['label','size','color','x','y','z']
-    if(Object.keys(nodeAttr).length < 1){
-     return (<div><h3>Attributes</h3><p>No attributes available</p></div>)
-    }
-    else if(Object.keys(nodeAttr).filter(elem => !excluded.includes(elem)).length < 1){
-      return(<div><h3>Attributes</h3>{nodeAttr.label ? <p>{nodeAttr.label}</p> : <p>No attributes available</p>}</div>)
-
-    }
-    return (<div>
-     <h3>Attributes</h3>
-     <details>
-      <summary>{nodeAttr.label ? nodeAttr.label : 'Node Attributes'}</summary>
-     {
-      (() => {
-       let attributes = []
-       let count = 0
-       for(let [attr,value] of Object.entries(nodeAttr)){
-         if(excluded.includes(attr)){
-          continue
-         }
-         attributes.push(  
-           <p key={count} onClick={()=> {groupGraphAroundAttribute(attr)}}>{attr}: {value}</p>
-         )
-         count++
+    const retrieveNodeAttributes = function(id) {
+      let nodeAttr = graphAttributes[id]
+      const excluded = ['label', 'size', 'color', 'x', 'y', 'z']
+      if (Object.keys(nodeAttr).length < 1) {
+        return (<div><h3>Attributes</h3><p>No attributes available</p></div>)
       }
-      return attributes
-     })() 
-     }
-     </details>
-    </div>)
-}
+      else if (Object.keys(nodeAttr).filter(elem => !excluded.includes(elem)).length < 1) {
+        return (<div><h3>Attributes</h3>{nodeAttr.label ? <p>{nodeAttr.label}</p> : <p>No attributes available</p>}</div>)
 
-const groupGraphAroundAttribute = function(attr){
-  let groupNumbers = {}
-  let count = 1
-  for(let attributes of Object.values(graphAttributes)){
+      }
+      return (<div>
+        <h3>Attributes</h3>
+        <details>
+          <summary>{nodeAttr.label ? nodeAttr.label : 'Node Attributes'}</summary>
+          {
+            (() => {
+              let attributes = []
+              let count = 0
+              for (let [attr, value] of Object.entries(nodeAttr)) {
+                if (excluded.includes(attr)) {
+                  continue
+                }
+                attributes.push(
+                  <p key={count} onClick={() => { groupGraphAroundAttribute(attr) }}>{attr}: {value}</p>
+                )
+                count++
+              }
+              return attributes
+            })()
+          }
+        </details>
+      </div>)
+    }
+
+    const groupGraphAroundAttribute = function(attr) {
+      let groupNumbers = {}
+      let count = 1
+      for (let attributes of Object.values(graphAttributes)) {
         let reference = attributes[attr]
-        if(!reference){
+        if (!reference) {
           continue
         }
-        if(Object.keys(groupNumbers).includes(attributes[attr])){
+        if (Object.keys(groupNumbers).includes(attributes[attr])) {
           continue
         }
-        else{
+        else {
           groupNumbers[reference] = count
           count++
         }
-  }
-  
-  
-  let newNodes = graphState.nodes.map(function(nodeObj){
-    const id = Object.values(nodeObj)[0]
-    let reference = graphAttributes[id][attr]
-    let value = groupNumbers[reference]
-    value ? Object.assign(nodeObj,{group : value}) : nodeObj
-    return nodeObj
-  })
-  
-  setGraphState(graphState => Object.assign({},graphState, {nodes : newNodes}))
-}
+      }
+
+
+      let newNodes = graphState.nodes.map(function(nodeObj) {
+        const id = Object.values(nodeObj)[0]
+        let reference = graphAttributes[id][attr]
+        let value = groupNumbers[reference]
+        value ? Object.assign(nodeObj, { group: value }) : nodeObj
+        return nodeObj
+      })
+
+      setGraphState(graphState => Object.assign({}, graphState, { nodes: newNodes }))
+    }
 
     let chart = ForceGraph(graphState, {
       nodeId: d => d.id,
@@ -257,39 +259,39 @@ const groupGraphAroundAttribute = function(attr){
     })
     let displaySvg = document.getElementById('svg')
 
-    if ( displaySvg.innerHTML === '' ) {
+    if (displaySvg.innerHTML === '') {
       displaySvg.appendChild(chart)
     }
-    
+
   }, [graphState, graphAttributes, zoomable])
 
- 
+
   const displayConnectedNodes = (nodeId) => {
     if (!nodeId) return
-    
+
     let svg = d3.select('svg g').selectAll('line')
     //Array.from(svg['_groups'][0]).forEach(line => console.log(line['__data__']))
-    
+
     return Array.from(svg['_groups'][0]).map(line => {
       let source = line['__data__'].source.id
       let target = line['__data__'].target.id
       let sourceLabel = graphAttributes[source].label
       let targetLabel = graphAttributes[target].label
 
-      if ( source === nodeId ) return targetLabel ? <div onMouseOver={ () => highlightNode(target) } className='app__sidebar--connectedNode'><p className='app__sidebar--connectedNode--label'>{targetLabel}</p><p className='app__sidebar--connectedNode--id'>id: { target }</p></div> : <p className='app__sidebar--connectedNode--id'>id :{ target }</p>
-      if ( target === nodeId ) return sourceLabel ? <div onMouseOver={ () => highlightNode(source) } className='app__sidebar--connectedNode'><p className='app__sidebar--connectedNode--label'>{sourceLabel}</p><p className='app__sidebar--connectedNode--id'>id: { source }</p></div> : <p className='app__sidebar--connectedNode--id'>id :{ source }</p>
-      
+      if (source === nodeId) return targetLabel ? <div onMouseOver={() => highlightNode(target)} className='app__sidebar--connectedNode'><p className='app__sidebar--connectedNode--label'>{targetLabel}</p><p className='app__sidebar--connectedNode--id'>id: {target}</p></div> : <p className='app__sidebar--connectedNode--id'>id :{target}</p>
+      if (target === nodeId) return sourceLabel ? <div onMouseOver={() => highlightNode(source)} className='app__sidebar--connectedNode'><p className='app__sidebar--connectedNode--label'>{sourceLabel}</p><p className='app__sidebar--connectedNode--id'>id: {source}</p></div> : <p className='app__sidebar--connectedNode--id'>id :{source}</p>
+
     })
-    
+
   }
 
   const highlightNode = (nodeId) => {
     let nodes = d3.select('.nodes').selectAll('circle')
     nodes.style("fill", (d) => {
-      if ( nodeId === d.id || d.id === selectedNode.node.srcElement['__data__'].id ) {
+      if (nodeId === d.id || d.id === selectedNode.node.srcElement['__data__'].id) {
         return "#00FF00"
       }
-      if ( connectedNodes.includes(d.id) ) {
+      if (connectedNodes.includes(d.id)) {
         return "#FF0000"
       }
       return d.color
@@ -298,48 +300,48 @@ const groupGraphAroundAttribute = function(attr){
 
   //Zooming and Panning functions
 
-  const handleZoom = function(e){
-    d3.selectAll('g').attr('transform',e.transform)
+  const handleZoom = function(e) {
+    d3.selectAll('g').attr('transform', e.transform)
   }
 
- 
-  zoomable.scaleExtent([0.25,10]).on('zoom',handleZoom)
-  
 
-  const zoomIn = function(){
-    d3.select('svg').call(zoomable.scaleBy,2)
+  zoomable.scaleExtent([0.25, 10]).on('zoom', handleZoom)
 
-  }
 
-  const zoomOut = function(){
-    d3.select('svg').call(zoomable.scaleBy,0.5)
+  const zoomIn = function() {
+    d3.select('svg').call(zoomable.scaleBy, 2)
 
   }
 
-  const panLeft = function(){
-    d3.select('svg').call(zoomable.translateBy,-50,0)
+  const zoomOut = function() {
+    d3.select('svg').call(zoomable.scaleBy, 0.5)
 
   }
 
-  const panRight = function(){
-    d3.select('svg').call(zoomable.translateBy,50,0)
+  const panLeft = function() {
+    d3.select('svg').call(zoomable.translateBy, -50, 0)
+
+  }
+
+  const panRight = function() {
+    d3.select('svg').call(zoomable.translateBy, 50, 0)
 
   }
 
   const findConnectedNodes = async (nodeId) => {
     if (!nodeId) return
-    
+
     let svg = d3.select('svg g').selectAll('line')
 
     let foundNodes = []
-    
+
     // Get all nodes linked to selectedNode
     Array.from(svg['_groups'][0]).map(line => {
       let source = line['__data__'].source.id
       let target = line['__data__'].target.id
 
-      if ( source === nodeId ) foundNodes.push(target)
-      if ( target === nodeId ) foundNodes.push(source)
+      if (source === nodeId) foundNodes.push(target)
+      if (target === nodeId) foundNodes.push(source)
     })
     setConnectedNodes([nodeId, ...foundNodes])
   }
@@ -348,10 +350,10 @@ const groupGraphAroundAttribute = function(attr){
     if (!connectedNodes) return
     let nodes = d3.select('.nodes').selectAll('circle')
     nodes.style("fill", (d) => {
-      if ( selectedNode.node && d.id === selectedNode.node.srcElement['__data__'].id ) {
+      if (selectedNode.node && d.id === selectedNode.node.srcElement['__data__'].id) {
         return "#00FF00"
       }
-      if ( connectedNodes.includes(d.id) ) {
+      if (connectedNodes.includes(d.id)) {
         return "#FF0000"
       }
       return d.color
@@ -363,29 +365,29 @@ const groupGraphAroundAttribute = function(attr){
   }, [connectedNodes, updateNodeColors])
 
   useEffect(() => {
-    if ( graphAttributes[hoveredNode] ) setHoveredNode(graphAttributes[hoveredNode].label.trim())
+    if (graphAttributes[hoveredNode]) setHoveredNode(graphAttributes[hoveredNode].label.trim())
   }, [graphAttributes, hoveredNode])
 
-  const resetDisplaySVG = function(){
+  const resetDisplaySVG = function() {
     let displaySvg = document.getElementById('svg')
     displaySvg.innerHTML = '';
     return
   }
 
-  const importGexf = function(event){
+  const importGexf = function(event) {
     let fileReader = new FileReader()
     let file = event.target.files[0]
-    fileReader.onload = function(){
+    fileReader.onload = function() {
       let parsedFile = parser(fileReader.result)
       setGraphState(parsedFile.graph)
       setGraphAttributes(parsedFile.attributes)
 
     }
-    if(file){
+    if (file) {
       resetDisplaySVG()
       fileReader.readAsText(file)
     }
-    else{
+    else {
       console.log('Problem with parsing file import')
     }
     return
@@ -397,10 +399,10 @@ const groupGraphAroundAttribute = function(attr){
     let { label, country, actor_type, size } = graphAttributes[hoveredNodeId]
     return (
       <>
-        <h2 className='app__hoveredNode--title'>{ label }</h2>  
-        <p>Country: { country }</p>
-        <p>Actor type: { actor_type }</p>
-        <p>Size: { size }</p>
+        <h2 className='app__hoveredNode--title'>{label}</h2>
+        <p>Country: {country}</p>
+        <p>Actor type: {actor_type}</p>
+        <p>Size: {size}</p>
       </>
     )
   }
@@ -415,7 +417,7 @@ const groupGraphAroundAttribute = function(attr){
 
       <div className="app__sidebar">
         <h1 className='app__sidebar--title'>GraphWork</h1>
-        <input type="file" onChange={(e) => {importGexf(e)}} accept=".gexf"/>
+        <input type="file" onChange={(e) => { importGexf(e) }} accept=".gexf" />
         <div className="app__sidebar--controls">
           <h2>Controls</h2>
           <div>
@@ -430,23 +432,23 @@ const groupGraphAroundAttribute = function(attr){
           </div>
         </div>
         <h2 className='app__sidebar--subtitle'>Selected Node</h2>
-        <p>{ `id: ${ selectedNode.node && selectedNode.node.srcElement ? selectedNode.node.srcElement['__data__'].id : 'Not selected' }`}</p>
+        <p>{`id: ${selectedNode.node && selectedNode.node.srcElement ? selectedNode.node.srcElement['__data__'].id : 'Not selected'}`}</p>
         <p className='app__sidebar--attributes'>{selectedNode.node && selectedNode.node.srcElement ? selectedNode.attributes : false}</p>
         <div>
-        <h2 className='app__sidebar--subtitle'>Connected nodes</h2>
-        <h4 className='app__sidebar--numConnectedNodes'>{ connectedNodes.length > 0 ? `${connectedNodes.length - 1} connected nodes` : '' }</h4>
-        <div className="app__sidebar__connectedNodes">
-          { displayConnectedNodes( selectedNode.node && selectedNode.node.srcElement ? selectedNode.node.srcElement['__data__'].id : null ) }
-        </div>
+          <h2 className='app__sidebar--subtitle'>Connected nodes</h2>
+          <h4 className='app__sidebar--numConnectedNodes'>{connectedNodes.length > 0 ? `${connectedNodes.length - 1} connected nodes` : ''}</h4>
+          <div className="app__sidebar__connectedNodes">
+            {displayConnectedNodes(selectedNode.node && selectedNode.node.srcElement ? selectedNode.node.srcElement['__data__'].id : null)}
+          </div>
         </div>
       </div>
       <div className='app__svg' id="svg">
       </div>
-      <div className={`app__hoveredNode ${ hoveredNode && hoveredNodeId ? '' : 'hidden' }`}>
-        { displayHoveredNodeData() }
+      <div className={`app__hoveredNode ${hoveredNode && hoveredNodeId ? '' : 'hidden'}`}>
+        {displayHoveredNodeData()}
       </div>
-      
-      
+
+
     </div>
   )
 }
